@@ -2,7 +2,7 @@
   <div class="uk-container">
     <nav class="uk-navbar-container uk-navbar-transparent uk-margin" uk-navbar>
       <div class="uk-navbar-left">
-        <a class="uk-navbar-item uk-logo" href="#">
+        <a class="uk-navbar-item uk-logo" [routerLink]="['/']">
           <span class="uk-icon uk-margin-small-right" uk-icon="icon: icon-color-light; ratio:0.15"></span>
         </a>
         <ul class="uk-navbar-nav">
@@ -20,12 +20,13 @@
             </a>
           </li>
           <li>
-            <a href="#">
+            <a [routerLink]="['/account']">
               <span class="uk-icon uk-margin-small-right" uk-icon="icon: user"></span>
+              {{user?.name}}
             </a>
           </li>
           <li>
-            <a [routerLink]="['/login']">
+            <a (click)="logout()">
               <span class="uk-icon uk-margin-small-right" uk-icon="icon: sign-out"></span>
             </a>
           </li>

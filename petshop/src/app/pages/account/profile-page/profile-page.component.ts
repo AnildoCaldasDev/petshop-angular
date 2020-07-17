@@ -6,56 +6,47 @@ import { ToastrService } from 'ngx-toastr';
 import { CustomValidator } from 'src/app/validators/custom.validator';
 
 @Component({
-  selector: 'app-signup-page',
-  templateUrl: './signup-page.component.html'
+  selector: 'app-profile-page',
+  templateUrl: './profile-page.component.html'
 })
-export class SignupPageComponent implements OnInit {
+export class ProfilePageComponent implements OnInit {
+
   public form: FormGroup;
   public processing = false;
 
   constructor(private router: Router,
     private service: DataService,
     private fb: FormBuilder,
-    private toastr: ToastrService) {
+    private toastr: ToastrService,
+  ) {
     this.form = this.fb.group({
       name: ['', Validators.compose([
         Validators.minLength(3),
         Validators.maxLength(80),
         Validators.required
       ])],
-      document: ['', Validators.compose([
-        Validators.minLength(14),
-        Validators.maxLength(14),
-        Validators.required,
-        CustomValidator.isCpf()
-      ])],
+      document: [{ value: '', disabled: true }],
       email: ['', Validators.compose([
         Validators.minLength(5),
         Validators.maxLength(120),
         Validators.required,
         CustomValidator.EmailValidator
-      ])],
-      password: ['', Validators.compose([
-        Validators.minLength(6),
-        Validators.maxLength(20),
-        Validators.required
       ])]
     });
+
+
   }
 
   ngOnInit() {
-
-  }
-
-  submit() {
     this.processing = true;
     this.service
-      .create(this.form.value)
+      .getProfile()
       .subscribe(
         (data: any) => {
           this.processing = false;
-          this.toastr.success(data.message, 'Bem-vindo!');
-          this.router.navigate(['/login']);
+          this.form.controls['name'].setValue(data.name);
+          this.form.controls['document'].setValue(data.document);
+          this.form.controls['email'].setValue(data.email);
         },
         (err) => {
           this.processing = false;
@@ -63,4 +54,22 @@ export class SignupPageComponent implements OnInit {
         }
       );
   }
+
+  submit() {
+    this.processing = true;
+    this.service
+      .updateProfile(this.form.value)
+      .subscribe(
+        (data: any) => {
+          this.processing = false;
+          this.toastr.success(data.message, 'Atualização Completa!');
+        },
+        (err) => {
+          this.processing = false;
+          this.toastr.error(err, 'Algo deu errado');
+        }
+      );
+  }
+
+
 }
